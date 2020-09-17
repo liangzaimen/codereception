@@ -21,3 +21,12 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+/CodeReception/.idea
+/CodeReception/.gradle
+/CodeReception/gradle
+/CodeReception/.gitignore
+/CodeReception/gradlew
+/CodeReception/gradlew.bat
+/CodeReception/local.properties
+/CodeReception/settings.gradle
