@@ -3,8 +3,12 @@ package top.hellooooo.codereception.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 public class PasswordExpireService extends Service {
+
+    private static final String TAG = "PasswordExpireService";
+
     /** 标识服务如果被杀死之后的行为 */
     int mStartMode;
 
@@ -17,7 +21,7 @@ public class PasswordExpireService extends Service {
     /** 当服务被创建时调用. */
     @Override
     public void onCreate() {
-
+        Log.i(TAG, "onCreate: PasswordExpireService is running...");
     }
 
     /** 调用startService()启动服务时回调 */

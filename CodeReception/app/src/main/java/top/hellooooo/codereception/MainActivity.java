@@ -2,10 +2,10 @@ package top.hellooooo.codereception;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import top.hellooooo.codereception.activity.BaseActivity;
+import top.hellooooo.codereception.service.PasswordExpireService;
 import top.hellooooo.codereception.util.SMSUtil;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -24,6 +25,8 @@ public class MainActivity extends BaseActivity {
 
     private EditText editText;
 
+    private Button button;
+
 
     @Override
     protected int initLayout() {
@@ -32,21 +35,39 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        textView = findViewById(R.id.tx_view);
-        editText = findViewById(R.id.view_edit);
+        textView = findViewById(R.id.view_tx);
+        editText = findViewById(R.id.view_et);
+        button = findViewById(R.id.view_btn);
     }
 
     @Override
     protected void initData() {
         myRequetPermission();
-        textView.setOnClickListener(view -> {
-            String phoneNum = SMSUtil.getPhoneNum(mContext);
-//            返回的手机号为空，要求输入
-            if (phoneNum.equals("")) {
 
+        String phoneNum = SMSUtil.getPhoneNum(mContext);
+//            返回的手机号为空，要求输入
+        if (phoneNum.equals("")) {
+            showToast("Please input you phone num");
+        } else {
+            showToast("Successfully get phone num, try to send message.");
+            SMSUtil.sendMessage("5556", "HIHI");
+            textView.setText(phoneNum);
+        }
+        button.setOnClickListener(view -> {
+//            需要获取手机号并发送短信
+            String tempPhoneNum = editText.getText().toString();
+//            尝试发送短信
+            if (tempPhoneNum.equals("") || tempPhoneNum == null) {
+                showToast("Sorry, empty string.");
+            } else {
+                showToast("Try to send message");
+                SMSUtil.sendMessage("5556", "Hello,World.");
             }
-            showToast(phoneNum);
         });
+
+//        启动服务
+        Intent passwordService = new Intent(this, PasswordExpireService.class);
+        startService(passwordService);
     }
 
 
@@ -67,6 +88,9 @@ public class MainActivity extends BaseActivity {
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, 1);
         }
     }
 
@@ -105,7 +129,8 @@ public class MainActivity extends BaseActivity {
                                         alertDialog.dismiss();
                                     }
                                     ActivityCompat.requestPermissions(MainActivity.this,
-                                            new String[]{Manifest.permission.READ_SMS}, 1);
+                                            new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                                    Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.SEND_SMS}, 1);
                                 });
                         alertDialog = builder.create();
                         alertDialog.setCanceledOnTouchOutside(false);

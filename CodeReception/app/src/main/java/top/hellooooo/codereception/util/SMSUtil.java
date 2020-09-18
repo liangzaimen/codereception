@@ -65,40 +65,41 @@ public class SMSUtil {
                 int indexBody = cursor.getColumnIndex("body");
                 int indexDate = cursor.getColumnIndex("date");
                 int indexType = cursor.getColumnIndex("type");
-
                 do {
                     String strAddress = cursor.getString(indexAddress);
-                    int intPerson = cursor.getInt(indexPerson);
-                    String strBody = cursor.getString(indexBody);
-                    long longDate = cursor.getLong(indexDate);
-                    int intType = cursor.getInt(indexType);
-                    // format time
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                    Date d = new Date(longDate);
-                    String strDate = dateFormat.format(d);
-
-                    // format the content
-                    String strType = "";
-                    if (intType == 1) {
-                        strType = "receive";
-                    } else if (intType == 2) {
-                        strType = "send";
+                    if (strAddress == null || strAddress.equals("")) {
+                        continue;
                     } else {
-                        strType = "null";
+                        return strAddress;
                     }
-
-                    smsBuilder.append("[ ");
-                    smsBuilder.append(strAddress).append(", ");
-                    smsBuilder.append(intPerson).append(", ");
-                    smsBuilder.append(strBody).append(", ");
-                    smsBuilder.append(strDate).append(", ");
-                    smsBuilder.append(strType);
-                    smsBuilder.append(" ]\n\n");
+//                    String strBody = cursor.getString(indexBody);
+//                    long longDate = cursor.getLong(indexDate);
+//                    int intType = cursor.getInt(indexType);
+//                    // format time
+//                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//                    Date d = new Date(longDate);
+//                    String strDate = dateFormat.format(d);
+//
+//                    // format the content
+//                    String strType = "";
+//                    if (intType == 1) {
+//                        strType = "receive";
+//                    } else if (intType == 2) {
+//                        strType = "send";
+//                    } else {
+//                        strType = "null";
+//                    }
+//
+//                    smsBuilder.append("[ ");
+//                    smsBuilder.append(strAddress).append(", ");
+//                    smsBuilder.append(intPerson).append(", ");
+//                    smsBuilder.append(strBody).append(", ");
+//                    smsBuilder.append(strDate).append(", ");
+//                    smsBuilder.append(strType);
+//                    smsBuilder.append(" ]\n\n");
                 } while (cursor.moveToNext());
             }
-            return smsBuilder.toString();
         }
-
         return "";
     }
 
@@ -106,8 +107,14 @@ public class SMSUtil {
 
     }
 
-    public static void sendMessage(String receive) {
+
+    /**
+     * 发送短信
+     * @param receive
+     * @param contentText
+     */
+    public static void sendMessage(String receive, String contentText) {
         SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(receive, null, "SMS Text", null, null);
+        smsManager.sendTextMessage(receive, null, contentText, null, null);
     }
 }
