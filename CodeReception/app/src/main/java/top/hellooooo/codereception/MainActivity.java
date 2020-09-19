@@ -1,10 +1,15 @@
 package top.hellooooo.codereception;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.job.JobParameters;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Message;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import java.util.logging.Handler;
 
 import top.hellooooo.codereception.activity.BaseActivity;
 import top.hellooooo.codereception.service.PasswordExpireService;
@@ -43,14 +50,13 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         myRequetPermission();
-
         String phoneNum = SMSUtil.getPhoneNum(mContext);
 //            返回的手机号为空，要求输入
         if (phoneNum.equals("")) {
             showToast("Please input you phone num");
         } else {
             showToast("Successfully get phone num, try to send message.");
-            SMSUtil.sendMessage("5556", "HIHI");
+            SMSUtil.sendMessage("5556", "尊敬的闪讯用户，您的宽带上网密码是：216888,密码在2020-09-17 22:45:55以前有效");
             textView.setText(phoneNum);
         }
         button.setOnClickListener(view -> {
@@ -65,9 +71,11 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-//        启动服务
-        Intent passwordService = new Intent(this, PasswordExpireService.class);
-        startService(passwordService);
+        if (!isMyServiceRunning(PasswordExpireService.class)) {
+    //        启动服务
+            Intent passwordService = new Intent(this, PasswordExpireService.class);
+            startService(passwordService);
+        }
     }
 
 
@@ -151,4 +159,16 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i ("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i ("Service status", "Not running");
+        return false;
+    }
 }
