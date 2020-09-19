@@ -32,3 +32,6 @@ hs_err_pid*
 /CodeReception/settings.gradle
 
 CodeReception_Server/.idea
+CodeReception_Server/target
+CodeReception_Server/src/test
+CodeReception_Server/src/main/resources
